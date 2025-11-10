@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffee Shop Rush ☕</title>
+  <style>
+    :root {
+      --bg: #f7f3ee;
+      --card: #fffaf5;
+      --ink: #2d220f;
+      --accent: #6f4e37;
+      /* coffee brown */
+      --accent-2: #c4a484;
+      /* latte */
+      --success: #2e7d32;
+      --danger: #b71c1c;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% 10%, #fff, var(--bg));
+      color: var(--ink);
+    }
+
+    .app-frame {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header.app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+
+    .brand-sub {
+      color: #6b6866;
+      font-size: .9rem;
+    }
+
+    .nav-inline {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(0, 0, 0, .08);
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, .12);
+    }
+
+    .nav-btn:active {
+      transform: translateY(0);
+    }
+
+    main.stage {
+      position: relative;
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 520px;
+      padding: 28px;
+    }
+
+    section.screen {
+      display: none;
+    }
+
+    section.screen[aria-hidden="false"] {
+      display: block;
+    }
+
+    .title-wrap {
+      text-align: center;
+      padding: 48px 12px;
+    }
+
+    .big-title {
+      font-size: clamp(32px, 4.5vw, 56px);
+      line-height: 1.05;
+      margin: 8px 0 4px;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: #6b6866;
+    }
+
+    .cta-row {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn,
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 14px;
+      padding: 14px 18px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .06s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .ghost-btn {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent-2);
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, .05);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+    }
+
+    .game-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      background: #fff;
+      padding: 8px 12px;
+      border: 1px solid rgba(0, 0, 0, .06);
+      box-shadow: var(--shadow);
+    }
+
+    .badge strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .play-area {
+      position: relative;
+      height: 360px;
+      margin-top: 10px;
+      background: #fff;
+      border: 1px dashed rgba(0, 0, 0, .08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .bean-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 18px;
+      padding: 12px;
+      background: #fff;
+      border: 2px solid var(--accent-2);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      width: 140px;
+      height: 140px;
+      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
+      position: absolute;
+    }
+
+    .bean-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, .12);
+    }
+
+    .bean-good {
+      border-color: var(--success);
+    }
+
+    .bean-bad {
+      border-color: var(--danger);
+    }
+
+    .centered {
+      text-align: center;
+    }
+
+    .trophy {
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .gameover {
+      color: var(--danger);
+      font-weight: 800;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: #6b6866;
+      font-size: .9rem;
+      text-align: center;
+    }
+
+    /* Accessibility helpers */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-frame">
+    <header class="app-header" aria-label="App Header Navigation">
+      <div class="brand-group" role="img" aria-label="Coffee Shop Rush brand mark">
+        <!-- Logo (transparent SVG) -->
+        <svg id="logoCoffeeCup" width="44" height="44" viewBox="0 0 64 64" fill="none"
+          xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="steam" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d7ccc8" />
+              <stop offset="100%" stop-color="#efebe9" />
+            </linearGradient>
+          </defs>
+          <path d="M10 26h40a0 0 0 0 1 0 0v6a14 14 0 0 1-14 14H24A14 14 0 0 1 10 32v-6a0 0 0 0 1 0 0Z" stroke="#6f4e37"
+            stroke-width="2.5" fill="#fff" />
+          <path d="M50 28h4a6 6 0 0 1 0 12h-4" stroke="#6f4e37" stroke-width="2.5" fill="none" />
+          <path d="M24 10c0 4-6 6-6 10" stroke="url(#steam)" stroke-width="2.5" />
+          <path d="M34 10c0 4-6 6-6 10" stroke="url(#steam)" stroke-width="2.5" />
+        </svg>
+        <div>
+          <div class="brand-title">Coffee Shop Rush</div>
+          <div class="brand-sub">A mindful clicker about great beans ☕</div>
+        </div>
+      </div>
+      <nav class="nav-inline" aria-label="Quick Navigation">
+        <button id="navToTitle" class="nav-btn" aria-label="Go to Title Screen">{SVG-HOME}</button>
+        <button id="navToGoals" class="nav-btn" aria-label="View Goal Screen">{SVG-STAR} Goals</button>
+        <button id="navToInstructions" class="nav-btn" aria-label="View Instructions">{SVG-INFO} Instructions</button>
+        <button id="navToGame" class="nav-btn" aria-label="Start Playing">{SVG-PLAY} Play</button>
+      </nav>
+    </header>
+
+    <main class="stage">
+      <!-- TITLE / START SCREEN -->
+      <section id="screenTitle" class="screen" aria-hidden="false">
+        <div class="title-wrap">
+          <div role="img" aria-label="Coffee bean illustration" class="centered">{SVG-BEAN-HERO}</div>
+          <h1 class="big-title">Roast right. Click wisely.</h1>
+          <p class="subtitle">Select the fresh beans, avoid the burnt ones. Reach 5 perfect picks before you run out of
+            lives.</p>
+          <div class="cta-row">
+            <button id="ctaStartGame" class="primary-btn" aria-label="Start Game">{SVG-PLAY} Start Game</button>
+            <button id="ctaReadGoals" class="ghost-btn" aria-label="Read Goals">{SVG-STAR} See Goals</button>
+            <button id="ctaReadInstructions" class="ghost-btn" aria-label="Read Instructions">{SVG-INFO} How to
+              Play</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- GOALS SCREEN -->
+      <section id="screenGoals" class="screen" aria-hidden="true">
+        <div class="grid-two">
+          <div class="card">
+            <h3>{SVG-STAR} Your Goal</h3>
+            <p>Score <strong>5</strong> by clicking the <strong>Fresh Bean</strong> when it pops to a random spot. Avoid
+              clicking the <strong>Burnt Bean</strong>—every mistake costs a life and resets your score to 0.</p>
+            <ul>
+              <li>Bean hops to a new random location every <strong>1 second</strong>.</li>
+              <li>Type is random each hop: <em>Fresh</em> or <em>Burnt</em>.</li>
+              <li>Correct click: <strong>Score +1</strong>. Win at <strong>Score = 5</strong>.</li>
+              <li>Wrong click: <strong>Lives −1</strong> and <strong>Score → 0</strong>. Start with <strong>3
+                  lives</strong>.</li>
+              <li>After Game Over, choose <em>Try Again</em> to reset lives to <strong>3</strong>.</li>
+            </ul>
+          </div>
+          <div class="card centered" role="img" aria-label="Trophy image">{SVG-TROPHY}</div>
+        </div>
+      </section>
+
+      <!-- INSTRUCTIONS SCREEN -->
+      <section id="screenInstructions" class="screen" aria-hidden="true">
+        <div class="grid-two">
+          <div class="card">
+            <h3>{SVG-INFO} How to Play</h3>
+            <ol>
+              <li>Press <strong>Play</strong>.</li>
+              <li>One bean will appear and <strong>jump to a new random spot every second</strong>.</li>
+              <li>If it's a <strong>Fresh Bean</strong>, click it to gain <strong>+1 score</strong>.</li>
+              <li>If it's a <strong>Burnt Bean</strong> and you click it, you <strong>lose 1 life</strong> and your
+                score resets to <strong>0</strong>.</li>
+              <li>Reach <strong>Score = 5</strong> to win. Lives start at <strong>3</strong>. Lives reset to
+                <strong>3</strong> when you choose to play again after losing.
+              </li>
+            </ol>
+            <p>Use the top navigation to jump between <em>Title</em>, <em>Goals</em>, <em>Instructions</em>, or return
+              to the <em>Game</em> at any time.</p>
+          </div>
+          <div class="card centered" role="img" aria-label="Instructional image">{SVG-HAND}</div>
+        </div>
+      </section>
+
+      <!-- GAME SCREEN -->
+      <section id="screenGame" class="screen" aria-hidden="true">
+        <div class="game-hud" aria-live="polite">
+          <div class="badge" id="displayScore" aria-label="Score display">{SVG-SCORE} <span>Score:</span> <strong
+              id="scoreValue">0</strong></div>
+          <div class="badge" id="displayLives" aria-label="Lives display">{SVG-LIFE} <span>Lives:</span> <strong
+              id="livesValue">3</strong></div>
+        </div>
+        <div class="play-area" id="playArea">
+          <button id="movingBean" class="bean-btn bean-good" aria-label="Moving bean button">
+            {SVG-BEAN-GOOD}
+            <span id="beanLabel" class="sr-only">Fresh Bean (good)</span>
+            <strong id="beanText">Fresh Bean</strong>
+          </button>
+        </div>
+      </section>
+
+      <!-- WIN SCREEN -->
+      <section id="screenWin" class="screen" aria-hidden="true">
+        <div class="title-wrap">
+          <div class="centered" role="img" aria-label="Trophy icon">{SVG-TROPHY}</div>
+          <h2 class="big-title trophy">You brewed perfection!</h2>
+          <p class="subtitle">Fantastic taste! Ready for another round?</p>
+          <div class="cta-row">
+            <button id="ctaWinPlayAgain" class="primary-btn" aria-label="Play again">{SVG-PLAY} Play Again</button>
+            <button id="ctaWinBackToTitle" class="ghost-btn" aria-label="Back to title">{SVG-HOME} Back to
+              HOME</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOSE SCREEN -->
+      <section id="screenLose" class="screen" aria-hidden="true">
+        <div class="title-wrap">
+          <div class="centered" role="img" aria-label="Game over image">{SVG-SPILL}</div>
+          <h2 class="big-title gameover">Spilled the brew...</h2>
+          <p class="subtitle">No worries—fresh start, fresh beans! Lives will reset to 3 when you try again.
+          </p>
+
+          <div class="cta-row">
+            <button id="ctaLoseTryAgain" class="primary-btn" aria-label="Try again">{SVG-PLAY} Try Again</button>
+            <button id="ctaLoseBackToTitle" class="ghost-btn" aria-label="Back to title">{SVG-HOME} Back to
+              HOME</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    // --- Inline SVG icons (transparent backgrounds) ---
+    const ICONS = {
+      HOME: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M9 22V12h6v10"/></svg>`,
+      PLAY: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`,
+      STAR: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>`,
+      INFO: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>`,
+      SCORE: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>`,
+      LIFE: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>`,
+      TROPHY: `<svg width="120" height="120" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 8h32v10a16 16 0 0 1-32 0V8Z" stroke="#6f4e37" stroke-width="2.5" fill="#fff3e0"/><path d="M12 12H8a8 8 0 0 0 8 8" stroke="#6f4e37" stroke-width="2.5" fill="none"/><path d="M52 12h4a8 8 0 0 1-8 8" stroke="#6f4e37" stroke-width="2.5" fill="none"/><rect x="24" y="40" width="16" height="6" rx="2" fill="#6f4e37"/><rect x="18" y="48" width="28" height="8" rx="3" fill="#c4a484"/></svg>`,
+      SPILL: `<svg width="120" height="120" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 28h24a0 0 0 0 1 0 0v5a10 10 0 0 1-10 10H28A10 10 0 0 1 18 33v-5a0 0 0 0 1 0 0Z" stroke="#6f4e37" stroke-width="2.5" fill="#fff"/><path d="M42 29h6a6 6 0 0 1 0 12h-6" stroke="#6f4e37" stroke-width="2.5" fill="none"/><path d="M14 46c8 4 20 4 28 0 6-3 10-2 12 0 1 1 1 3-1 4-13 8-40 8-48 0-2-1-2-3-1-4 2-2 6-3 10 0Z" fill="#6f4e37" opacity=".2"/></svg>`,
+      BEAN_HERO: `<svg width="120" height="120" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="32" cy="32" rx="14" ry="22" fill="#6f4e37"/><path d="M28 12c0 12 8 10 8 22s-8 10-8 22" stroke="#3e2a1d" stroke-width="2.5"/></svg>`,
+      BEAN_GOOD: `<svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="32" cy="32" rx="14" ry="22" fill="#6f4e37"/><path d="M28 12c0 12 8 10 8 22s-8 10-8 22" stroke="#3e2a1d" stroke-width="2.5"/></svg>`,
+      BEAN_BAD: `<svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="32" cy="32" rx="14" ry="22" fill="#3b2620"/><path d="M26 12c0 10 12 8 12 20s-12 12-12 20" stroke="#0f0706" stroke-width="2.5"/></svg>`,
+      HAND: `<svg width="120" height="120" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 34V16a4 4 0 0 1 8 0v12" stroke="#6f4e37" stroke-width="2.5"/><path d="M28 28V14a4 4 0 0 1 8 0v14" stroke="#6f4e37" stroke-width="2.5"/><path d="M36 26V14a4 4 0 0 1 8 0v18" stroke="#6f4e37" stroke-width="2.5"/><path d="M20 34c0 10 6 16 16 16h2c10 0 14-8 14-16v-6" stroke="#6f4e37" stroke-width="2.5"/></svg>`
+    };
+
+    // Replace icon placeholders BEFORE querying DOM elements
+    function replaceIconPlaceholders() {
+      const map = [
+        [/{SVG-HOME}/g, ICONS.HOME],
+        [/{SVG-PLAY}/g, ICONS.PLAY],
+        [/{SVG-STAR}/g, ICONS.STAR],
+        [/{SVG-INFO}/g, ICONS.INFO],
+        [/{SVG-SCORE}/g, ICONS.SCORE],
+        [/{SVG-LIFE}/g, ICONS.LIFE],
+        [/{SVG-TROPHY}/g, ICONS.TROPHY],
+        [/{SVG-SPILL}/g, ICONS.SPILL],
+        [/{SVG-BEAN-HERO}/g, ICONS.BEAN_HERO],
+        [/{SVG-BEAN-GOOD}/g, ICONS.BEAN_GOOD],
+        [/{SVG-BEAN-BAD}/g, ICONS.BEAN_BAD],
+        [/{SVG-HAND}/g, ICONS.HAND],
+      ];
+      map.forEach(([pattern, svg]) => {
+        document.body.innerHTML = document.body.innerHTML.replace(pattern, svg);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      replaceIconPlaceholders();
+
+      // --- Game State ---
+      const gameState = {
+        score: 0,
+        lives: 3,
+        winScore: 5,
+        isPlaying: false,
+        hopMs: 1000,
+        currentType: 'good', // 'good' | 'bad'
+        hopTimer: null,
+      };
+
+      // --- Screen Handling ---
+      const screens = {
+        title: document.getElementById('screenTitle'),
+        goals: document.getElementById('screenGoals'),
+        instructions: document.getElementById('screenInstructions'),
+        game: document.getElementById('screenGame'),
+        win: document.getElementById('screenWin'),
+        lose: document.getElementById('screenLose'),
+      };
+
+      function showScreen(name) {
+        Object.entries(screens).forEach(([key, el]) => {
+          const isTarget = key === name;
+          el.setAttribute('aria-hidden', String(!isTarget));
+        });
+        console.log(`[NAV] Moved to screen: ${name}`);
+      }
+
+      // --- HUD Elements ---
+      const scoreValue = document.getElementById('scoreValue');
+      const livesValue = document.getElementById('livesValue');
+      function updateHud() {
+        scoreValue.textContent = String(gameState.score);
+        livesValue.textContent = String(gameState.lives);
+        console.log(`[HUD] Score: ${gameState.score}, Lives: ${gameState.lives}`);
+      }
+
+      // --- Moving Bean ---
+      const playArea = document.getElementById('playArea');
+      const movingBean = document.getElementById('movingBean');
+      const beanText = document.getElementById('beanText');
+      const beanLabel = document.getElementById('beanLabel');
+
+      function setBeanType(type) {
+        gameState.currentType = type; // 'good' or 'bad'
+        if (type === 'good') {
+          movingBean.classList.remove('bean-bad');
+          movingBean.classList.add('bean-good');
+          movingBean.innerHTML = ICONS.BEAN_GOOD + '<span id="beanLabel" class="sr-only">Fresh Bean (good)</span><strong id="beanText">Fresh Bean</strong>';
+        } else {
+          movingBean.classList.remove('bean-good');
+          movingBean.classList.add('bean-bad');
+          movingBean.innerHTML = ICONS.BEAN_BAD + '<span id="beanLabel" class="sr-only">Burnt Bean (bad)</span><strong id="beanText">Burnt Bean</strong>';
+        }
+      }
+
+      function randomizePosition() {
+        // Ensure the bean stays fully inside playArea
+        const areaRect = playArea.getBoundingClientRect();
+        const beanRect = movingBean.getBoundingClientRect();
+        const maxLeft = playArea.clientWidth - beanRect.width;
+        const maxTop = playArea.clientHeight - beanRect.height;
+        const left = Math.max(0, Math.floor(Math.random() * (maxLeft + 1)));
+        const top = Math.max(0, Math.floor(Math.random() * (maxTop + 1)));
+        movingBean.style.left = left + 'px';
+        movingBean.style.top = top + 'px';
+      }
+
+      function hop() {
+        const nextType = Math.random() < 0.5 ? 'good' : 'bad';
+        setBeanType(nextType);
+        // After content change, recalc rect in next frame for accurate size
+        requestAnimationFrame(() => {
+          randomizePosition();
+        });
+        console.log(`[GAME] Bean hopped. Type: ${gameState.currentType}`);
+      }
+
+      function startHopping() {
+        stopHopping();
+        hop();
+        gameState.hopTimer = setInterval(hop, gameState.hopMs);
+        console.log('[GAME] Hopping started');
+      }
+      function stopHopping() {
+        if (gameState.hopTimer) {
+          clearInterval(gameState.hopTimer);
+          gameState.hopTimer = null;
+          console.log('[GAME] Hopping stopped');
+        }
+      }
+
+      // --- Core Game Logic ---
+      function handleGoodClick() {
+        gameState.score += 1;
+        console.log(`[EVENT] Good click. Score incremented to ${gameState.score}`);
+        if (gameState.score >= gameState.winScore) {
+          console.log('[STATE] Win condition reached');
+          showWinScreen();
+          return;
+        }
+        updateHud();
+        hop();
+      }
+
+      function handleBadClick() {
+        gameState.lives -= 1;
+        gameState.score = 0; // reset score when life is lost
+        console.log(`[EVENT] Bad click. Lives decremented. Score reset to ${gameState.score}. Lives now ${gameState.lives}`);
+        if (gameState.lives <= 0) {
+          console.log('[STATE] Lives exhausted -> Losing Screen');
+          showLoseScreen();
+          return;
+        }
+        updateHud();
+        hop();
+      }
+
+      movingBean.addEventListener('click', () => {
+        if (!gameState.isPlaying) return;
+        if (gameState.currentType === 'good') {
+          handleGoodClick();
+        } else {
+          handleBadClick();
+        }
+      });
+
+      function resetForNewGame() {
+        gameState.score = 0;
+        gameState.lives = 3; // lives reset after losing all and choosing to play again
+        gameState.isPlaying = true;
+        updateHud();
+        startHopping();
+        console.log('[RESET] Game state reset for new game');
+      }
+
+      function showGameScreen() {
+        showScreen('game');
+        if (!gameState.isPlaying) resetForNewGame();
+      }
+
+      function showTitleScreen() {
+        gameState.isPlaying = false;
+        stopHopping();
+        showScreen('title');
+      }
+
+      function showWinScreen() {
+        gameState.isPlaying = false;
+        stopHopping();
+        showScreen('win');
+      }
+
+      function showLoseScreen() {
+        gameState.isPlaying = false;
+        stopHopping();
+        showScreen('lose');
+      }
+
+      // --- Event Listeners ---
+      function wireEvents() {
+        // Header nav
+        document.getElementById('navToTitle').addEventListener('click', showTitleScreen);
+        document.getElementById('navToGoals').addEventListener('click', () => showScreen('goals'));
+        document.getElementById('navToInstructions').addEventListener('click', () => showScreen('instructions'));
+        document.getElementById('navToGame').addEventListener('click', showGameScreen);
+
+        // Title CTAs
+        document.getElementById('ctaStartGame').addEventListener('click', showGameScreen);
+        document.getElementById('ctaReadGoals').addEventListener('click', () => showScreen('goals'));
+        document.getElementById('ctaReadInstructions').addEventListener('click', () => showScreen('instructions'));
+
+        // Win / Lose CTAs
+        document.getElementById('ctaWinPlayAgain').addEventListener('click', () => { resetForNewGame(); showGameScreen(); });
+        document.getElementById('ctaWinBackToTitle').addEventListener('click', showTitleScreen);
+        document.getElementById('ctaLoseTryAgain').addEventListener('click', () => { resetForNewGame(); showGameScreen(); });
+        document.getElementById('ctaLoseBackToTitle').addEventListener('click', showTitleScreen);
+
+        console.log('[INIT] Event listeners wired');
+      }
+
+      // --- Boot ---
+      wireEvents();
+      updateHud();
+      console.log('[BOOT] Coffee Shop Rush loaded.');
+    });
+  </script>
+</body>
+
+</html>
